@@ -1,0 +1,61 @@
+trigger:
+  branches:
+    include:
+      - develop
+      - release/v*
+
+resources:
+  - repo: self
+
+variables:
+    - group: AzureML
+    - name: jobRunId
+      value: ""
+stages:
+  - stage: Build
+    displayName: Build and push stage
+
+    jobs:
+    - job: Job_1
+      displayName: Agent job 1
+      pool:
+        vmImage: ubuntu-20.04
+      steps:
+        - checkout: self
+        - task: UsePythonVersion@0
+          displayName: Use Python 3.8
+          inputs:
+            versionSpec: 3.8
+        - bash: |
+            export TENANT_ID="$(TENANT_ID)"
+          displayName: Using the env vars
+        - task: CmdLine@2
+          displayName: pip install --file requirements.txt
+          inputs:
+            script: pip install -r requirements.txt
+            workingDirectory: pipelines
+        - task: CmdLine@2
+          displayName: pytest
+          inputs:
+            script: |
+              pytest --junitxml=test-output.xml --cov=. --cov-report=xml
+        - task: PublishCodeCoverageResults@1
+          inputs:
+            codeCoverageTool: Cobertura
+            summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+        - task: PublishTestResults@2
+          inputs:
+            testResultsFormat: 'JUnit'
+            testResultsFiles: '**/test-output.xml'
+            searchFolder: '$(System.DefaultWorkingDirectory)'
+            failTaskOnFailedTests: true
+            publishRunAttachments: true
+        - task: AzureCLI@2
+          displayName: python build.py
+          inputs:
+            azureSubscription: $(AZURE_SUBSCRIPTION_CONNECTION)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              python build.py $(TENANT_ID) $(PRINCIPAL_ID) $(PRINCIPAL_PASS) $(WORKSPACE_NAME) $(SUBSCRIPTION_ID) $(RESOURCE_GROUP)
+            cwd: pipelines

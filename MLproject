@@ -1,0 +1,31 @@
+name: template-model-training-pipeline
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      environment_type:  {type: string, default: 'DEVELOPMENT'}
+    command: "python src/scripts/main.py {environment_type}"
+  extract:
+    parameters:
+      environment_type: {type: string, default: 'DEVELOPMENT'}
+    command: "python src/scripts/extract.py {environment_type}"
+  prepare:
+    parameters:
+      environment_type: {type: string, default: 'DEVELOPMENT'}
+    command: "python src/scripts/prepare.py {environment_type}"
+  train:
+    parameters:
+      environment_type:  {type: string, default: 'DEVELOPMENT'}
+    command: "python src/scripts/train.py {environment_type}"
+  validate:
+    parameters:
+      environment_type: {type: string, default: 'DEVELOPMENT'}
+      train_run_id: {type: string}
+    command: "python src/scripts/validate.py {environment_type} {train_run_id}"
+  model_registry:
+    parameters:
+      train_run_id: {type: string}
+    command: "python src/scripts/model_registry.py {train_run_id}"
+  

@@ -1,0 +1,27 @@
+.vscode
+.idea/**
+**/temp/dataset/wine_quality_raw**
+**/temp/dataset/**.csv
+**/temp/dataset/test**
+**/temp/dataset/train**
+
+mlruns
+**/__pycache__
+
+!.gitkeep
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+test-output.xml

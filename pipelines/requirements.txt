@@ -1,0 +1,13 @@
+mlflow==1.22.0
+azureml-mlflow==1.39.0
+azureml-core==1.39.0
+pandas==1.4.2
+scikit-learn==1.1.1
+numpy==1.22.0
+pytest==6.2.5
+pytest-cov==3.0.0
+pytest-azurepipelines==0.8.0
+fastparquet==0.8.1
+python-dotenv==0.20.0
+pyjwt==1.7.1
+protobuf==3.20.0
